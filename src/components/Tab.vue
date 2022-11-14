@@ -41,6 +41,9 @@ const changeCurrentTeam = (name) =>{
 <style lang='scss' scoped>
   .tabs{
     display: flex;
+    @media screen and (max-width: 1024px) {
+      overflow-y: scroll;
+    }
     .tab{
       border: 1px solid #cccccc;
       padding: 4px 2px;

@@ -10,12 +10,18 @@
           </select>
         </div>
       </div>
+      <div class="lead">
+        <h2>開催期間：{{store.state.currentFest.date}}</h2>
+      </div>
       <div class="stat-wrapper">
         <Tab />
         <StatTable v-if="store.state.currentTeam !== ''" />
       </div>
     </div>
   </main>
+  <footer>
+    <div class="copyright">(c) {{thisYear()}} hellen nico all rights revserved.</div>
+  </footer>
 </template>
 <script setup>
 import {ref, reactive, onMounted, onBeforeMount} from 'vue'
@@ -119,6 +125,10 @@ const changeFestData = async(e) =>{
   store.dispatch('setCurrentTeam', 'All')
 }
 
+const thisYear = () =>{
+  return new Date().getFullYear()
+}
+
 onMounted(async ()=>{
   const festList = await getFestList()
   store.dispatch('setFestList', festList)
@@ -133,9 +143,15 @@ onMounted(async ()=>{
 
 <style lang='scss' scoped>
 main{
-  padding-top: 120px;
+  padding-top: 60px;
+  @media screen and (max-width: 1024px) {
+    padding-top: 12px;
+  }
 }
 .container{
+  @media screen and (max-width: 1024px) {
+    padding: 12px;
+  }
   h1{
     font-size: 20px;
   }
@@ -156,8 +172,20 @@ main{
       }
     }
   }
+
+  .lead{
+    margin-top: 12px;
+  }
   .stat-wrapper{
     margin-top: 20px;
   }
 }
+footer{
+    width: 100%;
+    .copyright{
+    width: 100%;
+    margin: 12px auto;
+    text-align: center;
+    }
+  }
 </style>
