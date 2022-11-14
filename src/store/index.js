@@ -3,21 +3,35 @@ import { createStore  } from 'vuex'
 export default createStore({
   state () {
     return {
+      currentFest: "",
       currentTeam: "",
-      fesData: [],
+      festList: [],
+      festData: [],
     }
   },
   mutations: {
-    setFesData(state, payload) {
-      state.fesData = payload
+    setFestList(state, payload) {
+      state.festList = payload
+    },
+    setFestData(state, payload) {
+      state.festData = payload
+    },
+    setCurrentFest(state, payload) {
+      state.currentFest = payload
     },
     setCurrentTeam(state, payload) {
       state.currentTeam = payload
     },
   },
   actions: {
-    setFesData(context, payload){
-      context.commit('setFesData', payload)
+    setFestList(context, payload){
+      context.commit('setFestList', payload)
+    },
+    setFestData(context, payload){
+      context.commit('setFestData', payload)
+    },
+    setCurrentFest(context, payload){
+      context.commit('setCurrentFest', payload)
     },
     setCurrentTeam(context, payload){
       context.commit('setCurrentTeam', payload)

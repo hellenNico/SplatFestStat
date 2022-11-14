@@ -20,7 +20,7 @@ import {useStore} from 'vuex'
 const store = useStore()
 
 const tabItems = computed(() => {
-  return store.state.fesData.map(data =>{
+  return store.state.festData.map(data =>{
     return {
       name: data.name,
       color: data.color,

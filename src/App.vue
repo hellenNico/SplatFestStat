@@ -1,21 +1,44 @@
 <template>
-  <div class="container">
-    <h1>Splatoon3 フェス100ケツ集計</h1>
-    <div class="stat-wrapper">
-      <Tab />
-      <StatTable v-if="store.state.currentTeam !== ''" />
+  <main>
+    <div class="container" v-if="!loading">
+      <h1>Splatoon3 フェス100ケツ集計</h1>
+      <div class="list-wrapper">
+        <div class="form-field">
+          <label>フェスを選択</label>
+          <select class="fest-list" @change="changeFestData">
+            <option v-for="item in store.state.festList" :key="item.name" :value="item.name">{{item.name}}</option>
+          </select>
+        </div>
+      </div>
+      <div class="stat-wrapper">
+        <Tab />
+        <StatTable v-if="store.state.currentTeam !== ''" />
+      </div>
     </div>
-  </div>
+  </main>
 </template>
 <script setup>
-import {ref, reactive, onMounted} from 'vue'
+import {ref, reactive, onMounted, onBeforeMount} from 'vue'
 import {useStore} from 'vuex'
 import Tab from './components/Tab.vue'
 import StatTable from './components/StatTable.vue';
 
 const store = useStore()
 
-const getFesData = async (json) => {
+const loading = ref(true)
+
+const getFestList = async() =>{
+  const dataPath = 'data'
+  const res =  await fetch(`${dataPath}/festlist.json`)
+  if(res.status !== 200){
+    console.log('error')
+    return
+  }
+  const result = await res.json()
+  return result.data.reverse()
+}
+
+const getFestData = async (json) => {
   const dataPath = 'data'
   const res =  await fetch(`${dataPath}/${json}`)
   if(res.status !== 200){
@@ -23,6 +46,7 @@ const getFesData = async (json) => {
     return
   }
   const result = await res.json()
+  console.log(result)
   let data = result.fest.teams.map(team =>{
     return {
       name: team.teamName,
@@ -86,20 +110,54 @@ const setRanking = (data) => {
   return weaponList
 }
 
-onMounted(async() =>{
-  const fesData = await getFesData('fes2.json')
-  store.dispatch('setFesData', fesData)
+const changeFestData = async(e) =>{
+  const target = store.state.festList.find(item => item.name === e.target.value)
+  store.dispatch('setCurrentFest', target)
+  const festData = await getFestData(store.state.currentFest.file)
+  console.log(festData)
+  store.dispatch('setFestData', festData)
   store.dispatch('setCurrentTeam', 'All')
+}
+
+onMounted(async ()=>{
+  const festList = await getFestList()
+  store.dispatch('setFestList', festList)
+  store.dispatch('setCurrentFest', festList[0])
+  const festData = await getFestData(store.state.currentFest.file)
+  store.dispatch('setFestData', festData)
+  store.dispatch('setCurrentTeam', 'All')
+  loading.value = false
 })
+
 </script>
 
 <style lang='scss' scoped>
+main{
+  padding-top: 120px;
+}
 .container{
+  h1{
+    font-size: 20px;
+  }
   max-width: 1024px;
   margin-left: auto;
   margin-right: auto;
+  .list-wrapper{
+    margin-top: 32px;
+    .form-field{
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      .fest-list{
+        padding: 4px 8px;
+        border: 1px solid #aaaaaa;
+        background: #ffffff;
+        color: #333333;
+      }
+    }
+  }
   .stat-wrapper{
-    margin-top: 60px;
+    margin-top: 20px;
   }
 }
 </style>
